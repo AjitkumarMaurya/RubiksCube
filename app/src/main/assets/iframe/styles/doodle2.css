@@ -278,3 +278,53 @@ body {
 .SPRITE_share_64_2x{background:no-repeat url("../../sprite-ui.png") 0 -134px;width:32px;height:32px;background-size:49px 688px}
 .SPRITE_share_64_2x:hover{background:no-repeat url("../../sprite-ui.png") 0 -202px;width:32px;height:32px;background-size:49px 688px}
 .SPRITE_twitter_64_2x{background:no-repeat url("../../sprite-ui.png") 0 -388px;width:32px;height:32px;background-size:49px 688px}
+
+/* ── Game state management ───────────────────────────────────────────────── */
+/* Buttons are interactive only in the interactive state */
+.state-loading #buttonpanel,
+.state-logo    #buttonpanel,
+.state-scrambling #buttonpanel {
+  pointer-events: none;
+  opacity: 0.4;
+  -webkit-transition: opacity 400ms;
+          transition: opacity 400ms;
+}
+.state-interactive #buttonpanel,
+.state-solved      #buttonpanel {
+  pointer-events: auto;
+  opacity: 1;
+  -webkit-transition: opacity 400ms;
+          transition: opacity 400ms;
+}
+
+/* Move counter hidden until the cube is playable */
+.state-loading  #movecounter,
+.state-logo     #movecounter,
+.state-scrambling #movecounter {
+  opacity: 0;
+  -webkit-transition: opacity 400ms;
+          transition: opacity 400ms;
+}
+.state-interactive #movecounter,
+.state-solved      #movecounter {
+  opacity: 1;
+  -webkit-transition: opacity 400ms;
+          transition: opacity 400ms;
+}
+
+/* Cube container: block interaction during non-interactive states */
+.state-loading    #container,
+.state-logo       #container,
+.state-scrambling #container {
+  cursor: default;
+  pointer-events: none;
+}
+.state-interactive #container {
+  cursor: pointer;
+  pointer-events: auto;
+}
+/* After solve, keep pointer-events on but switch cursor to celebrate */
+.state-solved #container {
+  cursor: default;
+  pointer-events: none;
+}
