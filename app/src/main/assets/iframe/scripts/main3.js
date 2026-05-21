@@ -2,6 +2,19 @@ var motion;
 var startTime = 0;
 var isMobile = dataStore['fpdoodle'] == '1';
 var scopedCheckQueue;
+
+var GameState = (function() {
+  var STATES = ['loading', 'logo', 'scrambling', 'interactive', 'solved'];
+  var current = 'loading';
+  function setState(state) {
+    if (STATES.indexOf(state) === -1) return;
+    STATES.forEach(function(s) { document.body.classList.remove('state-' + s); });
+    current = state;
+    document.body.classList.add('state-' + state);
+  }
+  function getState() { return current; }
+  return { setState: setState, getState: getState };
+})();
 var ua = navigator.userAgent,
     isIe = ua.indexOf('MSIE') > -1 || ua.indexOf('Trident') > -1;
 var useLockedControls = true,
@@ -102,8 +115,10 @@ if (!isIe) {
   }
   requestAnimationFrame(updateShadow);
 }
+GameState.setState('loading');
 window.setTimeout(setupLogo, 100);
 function setupLogo() {
+  GameState.setState('logo');
   cube.rotation.set(
       (25).degreesToRadians(),
       (-45).degreesToRadians(),
@@ -186,6 +201,7 @@ function initiateAudio() {
   });
 }
 function startInteractiveCube() {
+  GameState.setState('interactive');
   if (!isMobile) {
     enableDeviceMotion();
   }
@@ -202,6 +218,7 @@ function startInteractiveCube() {
     }
     postParentMessage({'moves': cube.moveCounter});
     if (cube.isSolved()) {
+      GameState.setState('solved');
       setTimeout(function() {
         cube.hideInvisibleFaces = false;
         cube.showIntroverts();
@@ -264,6 +281,7 @@ function startScrambleAnimation() {
   cube.show();
 }
 function scrambleCube() {
+  GameState.setState('scrambling');
   new TWEEN.Tween(cube.position)
   .to({
         x: 0,
